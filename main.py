@@ -1,29 +1,37 @@
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
-import os
+import excel
+
 
 with open('C:\\Users\\1\\Desktop\\project\\API DATA\\COIN MARKET CAP\\api.py', 'r', encoding='utf-8') as file:
   API_KEY = file.read()
 
-url = 'https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-parameters = {
-  'start':'1',
-  'limit':'1000',
-}
-headers = {
-  'Accepts': 'application/json',
-  'X-CMC_PRO_API_KEY': API_KEY,
-}
 
-session = Session()
-session.headers.update(headers)
+def main():
+  url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+  parameters = {
+    'start': '1',
+    'limit': '1000',
+    'CMC_PRO_API_KEY': API_KEY,
+  }
+  headers = {
+    'Accepts': 'application/json',
+    'X-CMC_PRO_API_KEY': API_KEY,
+  }
 
-try:
-  response = session.get(url, params=parameters)
-  data = json.loads(response.text)
+  session = Session()
+  session.headers.update(headers)
 
-  for i in data['data']:
-    print(i['name'])
-except (ConnectionError, Timeout, TooManyRedirects) as e:
-  print(e)
+  try:
+    response = session.get(url, params=parameters)
+    data = json.loads(response.text)
+    return data
+
+  except (ConnectionError, Timeout, TooManyRedirects) as e:
+    print(e)
+
+
+if __name__ == "__main__":
+  data = main()
+  excel.create_table(data)
