@@ -1,16 +1,29 @@
-# This is a sample Python script.
+from requests import Request, Session
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+import json
+import os
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+with open('C:\\Users\\1\\Desktop\\project\\API DATA\\COIN MARKET CAP\\api.py', 'r', encoding='utf-8') as file:
+  API_KEY = file.read()
 
+url = 'https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+parameters = {
+  'start':'1',
+  'limit':'1000',
+}
+headers = {
+  'Accepts': 'application/json',
+  'X-CMC_PRO_API_KEY': API_KEY,
+}
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+session = Session()
+session.headers.update(headers)
 
+try:
+  response = session.get(url, params=parameters)
+  data = json.loads(response.text)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+  for i in data['data']:
+    print(i['name'])
+except (ConnectionError, Timeout, TooManyRedirects) as e:
+  print(e)
